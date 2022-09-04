@@ -5,6 +5,9 @@ import {
 } from "https://unpkg.com/htm/preact/standalone.module.js";
 import { upscaleDataURL } from "./WebFSR.js"
 
+var fileType = "";
+var fileName = "";
+
 function App(props) {
     const [showingUpscaled, setShowingUpscaled] = useState(false);
     const [showingOriginal, setShowingOriginal] = useState(false);
@@ -17,18 +20,18 @@ function App(props) {
         canvas.width = image.naturalWidth;
         canvas.height = image.naturalHeight;
         canvas.getContext('2d').drawImage(image, 0, 0);
-        const dataURL = canvas.toDataURL("image/webp");
+        const dataURL = canvas.toDataURL(fileType);
         return dataURL;
     };
 
     async function upscaleImage() {
-        const upscaledImageDataURL = await upscaleDataURL(toDataURL('originalImage'), "image/webp");
+        const upscaledImageDataURL = await upscaleDataURL(toDataURL('originalImage'), fileType);
         setUpscaledImageSrc(upscaledImageDataURL);
         setShowingUpscaled(true);
     }
 
     function downloadUpscaledImage() {
-        downloadDataURL(toDataURL('upscaledImage'), "upscaledImage");
+        downloadDataURL(toDataURL('upscaledImage'), fileName + "_upscaled");
     }
 
     function downloadDataURL(dataurl, filename) {
@@ -53,6 +56,8 @@ function App(props) {
 
         if (file) {
             reader.readAsDataURL(file);
+            fileType = file.type;
+            fileName = file.name.substring(0, file.name.indexOf('.'));
         }
     }
 
@@ -92,7 +97,8 @@ function App(props) {
                             <ion-row class="centerButton">
                                 <ion-col size="12" size-xs>
                                     <ion-button onClick=${async () => clickLoadButton()} mode="ios">Load Image</ion-button>
-                                    <input type="file" onChange="${() => loadImageFile()}" id="imageInput" style="display: none;" />
+                                    <input type="file" onChange="${() => loadImageFile()}" id="imageInput" style="display: none;"
+                                        accept="image/*" />
                                 </ion-col>
                                 <ion-col size="12" size-xs>
                                     ${showingOriginal && html`

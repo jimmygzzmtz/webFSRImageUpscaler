@@ -258,19 +258,6 @@ var ImageShader = /** @class */ (function () {
     return ImageShader;
 })();
 
-async function loadImage(imageUrl) {
-    let img;
-    const imageLoadPromise = new Promise(resolve => {
-        img = new Image();
-        img.onload = resolve;
-        img.src = imageUrl;
-    });
-
-    await imageLoadPromise;
-    console.log("image loaded");
-    return img;
-}
-
 export async function upscaleDataURL(originalDataURL, dataURLType = "image/png") {
     var upscaledDataURL = "default";
     const dataURLPromise = new Promise(resolve => {
@@ -278,7 +265,7 @@ export async function upscaleDataURL(originalDataURL, dataURLType = "image/png")
         fsrImage.id = "newFsrImage";
         fsrImage.src = originalDataURL;
         fsrImage.style.display = "none";
-        fsrImage.onload = () =>  {
+        fsrImage.onload = () => {
             const imgFilter = new ImageShader();
             const renderedImg = document.getElementById("newFsrImage");
             imgFilter.setImage(renderedImg);
